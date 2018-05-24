@@ -21,12 +21,6 @@ namespace DN.OpenSource.Transformer
             this.SemanticModel = semanticModel;
         }
 
-        object add()
-        {
-            return null;
-        }
-
-
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
 
