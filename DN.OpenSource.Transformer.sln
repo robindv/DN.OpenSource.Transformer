@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DN.OpenSource.Transformer", "DN.OpenSource.Transformer\DN.OpenSource.Transformer.csproj", "{A13196D6-8C68-4AA8-8512-C77A834E9DAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A13196D6-8C68-4AA8-8512-C77A834E9DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A13196D6-8C68-4AA8-8512-C77A834E9DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A13196D6-8C68-4AA8-8512-C77A834E9DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A13196D6-8C68-4AA8-8512-C77A834E9DAC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {079D9920-1163-432D-BAC5-B0725EE0B551}
+	EndGlobalSection
+EndGlobal
