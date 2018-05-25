@@ -47,8 +47,8 @@ namespace DN.OpenSource.Transformer
             }
             else
             { 
-                    expression = SyntaxFactory.InvocationExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(@"System.Linq.Expressions.Expression"),
-                                    SyntaxFactory.IdentifierName(@"Empty")).WithOperatorToken(SyntaxFactory.Token(SyntaxKind.DotToken)));
+                expression = SyntaxFactory.InvocationExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(@"System.Linq.Expressions.Expression"),
+                                SyntaxFactory.IdentifierName(@"Empty")).WithOperatorToken(SyntaxFactory.Token(SyntaxKind.DotToken)));
             }
 
             ArrowExpressionClauseSyntax arrowExpressionClause = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTrailingTrivia(SyntaxFactory.Space).WithLeadingTrivia(SyntaxFactory.Space), expression);
