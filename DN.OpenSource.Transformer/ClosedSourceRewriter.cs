@@ -21,10 +21,20 @@ namespace DN.OpenSource.Transformer
             this.SemanticModel = semanticModel;
         }
 
+        public static bool HasClosedSourceAttribute(MethodDeclarationSyntax node)
+        {
+            if (node.AttributeLists.Any(l => l.Attributes.Any(a => a.Name.ToString() == "ClosedSource")))
+                return true;
+
+            if (node.Parent is ClassDeclarationSyntax && (node.Parent as ClassDeclarationSyntax).AttributeLists.Any(l => l.Attributes.Any(a => a.Name.ToString() == "ClosedSource")))
+                return true;
+
+            return false;
+        }
+
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-
-            if (!node.AttributeLists.Any(l => l.Attributes.Any(a => a.Name.ToString() == "ClosedSource")))
+            if (!HasClosedSourceAttribute(node))
                 return node;
 
             var returntype = node.ReturnType.ToString();
@@ -43,6 +53,11 @@ namespace DN.OpenSource.Transformer
             {
                 nullexpression = SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0));
             }
+            else if(returntype == "bool")
+            {
+                nullexpression = SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
+            }
+
 
             var returns = SyntaxFactory.ReturnStatement(nullexpression).NormalizeWhitespace().WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n")).WithLeadingTrivia(node.Body.OpenBraceToken.LeadingTrivia.AddRange(fourSpaces));
             var newBody = SyntaxFactory.Block(returns).WithTriviaFrom(node.Body).WithOpenBraceToken(node.Body.OpenBraceToken).WithCloseBraceToken(node.Body.CloseBraceToken);
