@@ -39,32 +39,24 @@ namespace DN.OpenSource.Transformer
 
             var returntype = node.ReturnType.ToString();
 
-            ExpressionSyntax nullexpression = null;
+            ExpressionSyntax expression = null;
 
-            if (Char.IsUpper(returntype.First()) || returntype == "string")
+            if (returntype != "void")
             {
-                nullexpression = SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression);
+                expression = SyntaxFactory.DefaultExpression(node.ReturnType.WithoutTrivia());
             }
-            else if(returntype == "int")
-            {
-                nullexpression = SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0));
-            }
-            else if(returntype == "double")
-            {
-                nullexpression = SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0));
-            }
-            else if(returntype == "bool")
-            {
-                nullexpression = SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression);
+            else
+            { 
+                    expression = SyntaxFactory.InvocationExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(@"System.Linq.Expressions.Expression"),
+                                    SyntaxFactory.IdentifierName(@"Empty")).WithOperatorToken(SyntaxFactory.Token(SyntaxKind.DotToken)));
             }
 
-
-            var returns = SyntaxFactory.ReturnStatement(nullexpression).NormalizeWhitespace().WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n")).WithLeadingTrivia(node.Body.OpenBraceToken.LeadingTrivia.AddRange(fourSpaces));
-            var newBody = SyntaxFactory.Block(returns).WithTriviaFrom(node.Body).WithOpenBraceToken(node.Body.OpenBraceToken).WithCloseBraceToken(node.Body.CloseBraceToken);
+            ArrowExpressionClauseSyntax arrowExpressionClause = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTrailingTrivia(SyntaxFactory.Space).WithLeadingTrivia(SyntaxFactory.Space), expression);
 
             return SyntaxFactory.MethodDeclaration(node.AttributeLists, node.Modifiers,
                     node.ReturnType, node.ExplicitInterfaceSpecifier, node.Identifier,
-                    node.TypeParameterList, node.ParameterList, node.ConstraintClauses, newBody, null, node.SemicolonToken);
+                    node.TypeParameterList, node.ParameterList.WithoutTrivia(), node.ConstraintClauses, null, arrowExpressionClause, SyntaxFactory.Token(SyntaxKind.SemicolonToken)).WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n"));
+            
         }
     }
 }
