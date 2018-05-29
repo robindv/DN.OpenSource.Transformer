@@ -37,6 +37,9 @@ namespace DN.OpenSource.Transformer
             if (!HasClosedSourceAttribute(node))
                 return node;
 
+            if (node.Modifiers.Any(m => m.Text == "abstract"))
+                return node;
+
             var returntype = node.ReturnType.ToString();
 
             ExpressionSyntax expression = null;
