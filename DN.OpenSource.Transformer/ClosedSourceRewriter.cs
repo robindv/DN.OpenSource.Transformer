@@ -32,6 +32,19 @@ namespace DN.OpenSource.Transformer
             return false;
         }
 
+        public override SyntaxNode VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
+        {
+            if (!HasClosedSourceAttribute(node, node.AttributeLists))
+                return node;
+
+            ExpressionSyntax expression = SyntaxFactory.InvocationExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName(@"System.Linq.Expressions.Expression"),
+                                SyntaxFactory.IdentifierName(@"Empty")).WithOperatorToken(SyntaxFactory.Token(SyntaxKind.DotToken)));
+            
+            ArrowExpressionClauseSyntax arrowExpressionClause = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTrailingTrivia(SyntaxFactory.Space).WithLeadingTrivia(SyntaxFactory.Space), expression);
+
+            return SyntaxFactory.ConstructorDeclaration(node.AttributeLists, node.Modifiers, node.Identifier, node.ParameterList.WithoutTrivia(), node.Initializer, arrowExpressionClause, SyntaxFactory.Token(SyntaxKind.SemicolonToken)).WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n"));
+        }
+
         public override SyntaxNode VisitFieldDeclaration(FieldDeclarationSyntax node)
         {
             if (!HasClosedSourceAttribute(node, node.AttributeLists))
