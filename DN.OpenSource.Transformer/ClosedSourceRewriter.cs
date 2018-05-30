@@ -21,9 +21,9 @@ namespace DN.OpenSource.Transformer
             this.SemanticModel = semanticModel;
         }
 
-        public static bool HasClosedSourceAttribute(MethodDeclarationSyntax node)
+        public static bool HasClosedSourceAttribute(SyntaxNode node, SyntaxList<AttributeListSyntax> attributelist)
         {
-            if (node.AttributeLists.Any(l => l.Attributes.Any(a => a.Name.ToString() == "ClosedSource")))
+            if (attributelist.Any(l => l.Attributes.Any(a => a.Name.ToString() == "ClosedSource")))
                 return true;
 
             if (node.Parent is ClassDeclarationSyntax && (node.Parent as ClassDeclarationSyntax).AttributeLists.Any(l => l.Attributes.Any(a => a.Name.ToString() == "ClosedSource")))
@@ -32,9 +32,21 @@ namespace DN.OpenSource.Transformer
             return false;
         }
 
+        public override SyntaxNode VisitFieldDeclaration(FieldDeclarationSyntax node)
+        {
+            if (!HasClosedSourceAttribute(node, node.AttributeLists))
+                return node;
+
+            if (node.Modifiers.Any(m => m.ValueText == "const")) // for now
+                return node;
+
+            VariableDeclarationSyntax decl = SyntaxFactory.VariableDeclaration(node.Declaration.Type, SyntaxFactory.SeparatedList<VariableDeclaratorSyntax>(node.Declaration.Variables.Select(n => n.WithInitializer(null).WithoutTrailingTrivia()))).WithoutTrailingTrivia();
+            return node.WithDeclaration(decl).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)).WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n"));
+        }
+
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            if (!HasClosedSourceAttribute(node))
+            if (!HasClosedSourceAttribute(node, node.AttributeLists))
                 return node;
 
             if (node.Modifiers.Any(m => m.Text == "abstract"))
