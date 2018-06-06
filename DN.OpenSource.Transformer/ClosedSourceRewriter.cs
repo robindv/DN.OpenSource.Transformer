@@ -53,7 +53,7 @@ namespace DN.OpenSource.Transformer
             
             ArrowExpressionClauseSyntax arrowExpressionClause = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTrailingTrivia(SyntaxFactory.Space).WithLeadingTrivia(SyntaxFactory.Space), expression);
 
-            return SyntaxFactory.ConstructorDeclaration(node.AttributeLists, node.Modifiers, node.Identifier, node.ParameterList.WithoutTrivia(), node.Initializer, arrowExpressionClause, SyntaxFactory.Token(SyntaxKind.SemicolonToken)).WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n"));
+            return SyntaxFactory.ConstructorDeclaration(node.AttributeLists, node.Modifiers, node.Identifier, node.Initializer == null ? node.ParameterList.WithoutTrailingTrivia() : node.ParameterList, node.Initializer?.WithoutTrailingTrivia() ?? null, arrowExpressionClause, SyntaxFactory.Token(SyntaxKind.SemicolonToken)).WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n"));
         }
 
         public override SyntaxNode VisitFieldDeclaration(FieldDeclarationSyntax node)
