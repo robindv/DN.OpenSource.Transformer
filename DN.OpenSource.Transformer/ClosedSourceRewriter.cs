@@ -15,6 +15,7 @@ namespace DN.OpenSource.Transformer
         private readonly SemanticModel SemanticModel;
 
         IEnumerable<SyntaxTrivia> fourSpaces = new[] { SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space };
+        SyntaxToken semicolonToken = SyntaxFactory.Token(SyntaxKind.SemicolonToken);
 
         public ClosedSourceRewriter(SemanticModel semanticModel)
         {
@@ -30,6 +31,16 @@ namespace DN.OpenSource.Transformer
                 return true;
 
             return false;
+        }
+
+        public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
+        {
+            if (!HasClosedSourceAttribute(node, node.AttributeLists))
+                return node;
+
+            return SyntaxFactory.PropertyDeclaration(node.AttributeLists, node.Modifiers, node.Type, node.ExplicitInterfaceSpecifier, node.Identifier.WithoutTrivia().WithTrailingTrivia(SyntaxFactory.Space),
+                SyntaxFactory.AccessorList(SyntaxFactory.List<AccessorDeclarationSyntax>(new[] { SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(semicolonToken).WithLeadingTrivia(SyntaxFactory.Space).WithTrailingTrivia(SyntaxFactory.Space), SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(semicolonToken).WithTrailingTrivia(SyntaxFactory.Space) }))
+                ).WithTrailingTrivia(SyntaxFactory.EndOfLine("\r\n"));
         }
 
         public override SyntaxNode VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
